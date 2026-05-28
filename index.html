@@ -1273,8 +1273,18 @@ function initReportCharts() {
   const r2 = document.getElementById('rpt-grupos');
   if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
 }
+<script>
+
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
+
+  if(session){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+  }
+
+});
+
 </script>
-  supabaseClient.auth.getSession().then(({ data: { session } }) => {
 
   if(session){
     document.getElementById('login-screen').style.display='none';
