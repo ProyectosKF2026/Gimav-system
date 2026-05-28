@@ -944,27 +944,39 @@ function selectRole(el, role) {
   selectedRole = role;
 }
 
-function doLogin() {
-  const u = document.getElementById('login-user').value;
-  const p = document.getElementById('login-pass').value;
-  if(!u || !p){ document.getElementById('login-err').textContent='Ingrese usuario y contraseña'; return; }
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
-  const roleNames = {admin:'Administrador',nomina:'Nómina',rrhh:'RRHH',docente:'Docente'};
-  document.getElementById('user-name-display').textContent = u.split('@')[0];
-  document.getElementById('user-role-display').textContent = roleNames[selectedRole];
-  document.getElementById('user-avatar').textContent = u[0].toUpperCase();
-  initCharts(); renderEmpleados(); loadNomina(); loadRecibos(); initReportCharts();
-  if(document.getElementById('calc-emp')){
-    EMPLEADOS.forEach(e=>{
-      const o=document.createElement('option');
-      o.value=e.cedula; o.textContent=`${e.nombre} ${e.apellido}`;
-      document.getElementById('calc-emp').appendChild(o);
-    });
+async function doLogin() {
+
+  const email = document.getElementById('login-user').value;
+  const password = document.getElementById('login-pass').value;
+
+  if(!email || !password){
+    alert('Ingresa correo y contraseña');
+    return;
   }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if(error){
+    alert('Error: ' + error.message);
+    return;
+  }
+
+  console.log('Usuario conectado:', data);
+
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
 }
 
-function doLogout(){ document.getElementById('login-screen').style.display='flex'; document.getElementById('app').style.display='none'; }
+async function doLogout(){
+
+  await supabaseClient.auth.signOut();
+
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
 
 function nav(id, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1262,6 +1274,14 @@ function initReportCharts() {
   if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
 }
 </script>
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+
+  if(session){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+  }
+
+});
 if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
 }
 </script>
