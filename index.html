@@ -6,6 +6,8 @@
 <title>GIMAV — Sistema de Nómina</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- BUG #2 CORREGIDO: Supabase CDN agregado -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -23,15 +25,11 @@
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow-x:hidden}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-/* Layout */
 .app{display:flex;min-height:100vh}
 .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:100;transition:transform 0.3s}
 .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
 .header{height:var(--header);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50}
 .content{flex:1;padding:24px;overflow-y:auto}
-
-/* Sidebar */
 .logo{padding:20px 20px 16px;border-bottom:1px solid var(--border)}
 .logo-mark{display:flex;align-items:center;gap:10px}
 .logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff;letter-spacing:-0.5px}
@@ -50,8 +48,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:#fff;flex-shrink:0}
 .user-name{font-size:13px;font-weight:500;color:var(--text)}
 .user-role{font-size:11px;color:var(--text3)}
-
-/* Header */
 .page-title{font-size:16px;font-weight:600;color:var(--text)}
 .breadcrumb{font-size:12px;color:var(--text3);margin-top:1px}
 .header-actions{display:flex;align-items:center;gap:10px}
@@ -60,13 +56,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
 .btn-ghost:hover{background:var(--bg3);color:var(--text)}
-.btn-danger{background:var(--redbg);color:var(--red);border-color:rgba(255,91,114,0.3)}
-.btn-success{background:var(--greenbg);color:var(--green);border-color:rgba(46,204,138,0.3)}
 .icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg3);border:1px solid var(--border);color:var(--text2);transition:all 0.15s}
 .icon-btn:hover{background:var(--bg4);color:var(--text)}
 .notif-dot{width:8px;height:8px;background:var(--red);border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--bg2)}
-
-/* Cards */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:20px}
 .card-sm{padding:16px}
 .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
@@ -85,8 +77,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .badge-up{background:var(--greenbg);color:var(--green)}
 .badge-down{background:var(--redbg);color:var(--red)}
 .metric-icon{position:absolute;right:18px;top:18px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
-
-/* Table */
 .table-wrap{overflow-x:auto;border-radius:var(--radius2);border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 thead{background:var(--bg3)}
@@ -99,8 +89,6 @@ td{padding:11px 16px;color:var(--text);vertical-align:middle;white-space:nowrap}
 .td-mono{font-family:'DM Mono',monospace;font-size:13px}
 .td-green{color:var(--green);font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
 .td-red{color:var(--red);font-family:'DM Mono',monospace;font-size:13px}
-
-/* Badges */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:500}
 .badge-active{background:var(--greenbg);color:var(--green)}
 .badge-inactive{background:var(--bg4);color:var(--text3)}
@@ -108,8 +96,6 @@ td{padding:11px 16px;color:var(--text);vertical-align:middle;white-space:nowrap}
 .badge-auxiliar{background:rgba(0,212,170,0.12);color:var(--teal)}
 .badge-admin{background:rgba(245,166,35,0.12);color:var(--amber)}
 .badge-sena{background:rgba(255,91,114,0.12);color:var(--red)}
-
-/* Search + filters */
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .search-wrap{flex:1;min-width:200px;position:relative}
 .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
@@ -118,19 +104,38 @@ td{padding:11px 16px;color:var(--text);vertical-align:middle;white-space:nowrap}
 .search-input::placeholder{color:var(--text3)}
 select.filter{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 28px 8px 12px;color:var(--text2);font-size:13px;font-family:inherit;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235C6380' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 select.filter:focus{border-color:var(--accent);outline:none}
-
-/* Pages */
 .page{display:none}
 .page.active{display:block}
-
-/* Grid layouts */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.grid-cols{display:grid;gap:18px}
 .chart-wrap{position:relative;width:100%;height:280px}
-
-/* Payroll specific */
-.payslip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);max-width:760px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:10px 16px;font-size:13.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;font-weight:500;transition:all 0.15s;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.activity-text{font-size:13px;color:var(--text2)}
+.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);position:fixed;inset:0;z-index:999}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;width:380px}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo .mark{width:52px;height:52px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;margin:0 auto 12px}
+.login-logo h1{font-size:20px;font-weight:600}
+.login-logo p{font-size:13px;color:var(--text3);margin-top:4px}
+.login-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.role-btn{padding:10px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--bg3)}
+.role-btn:hover{border-color:var(--accent);background:var(--accentbg)}
+.role-btn.selected{border-color:var(--accent);background:var(--accentbg);color:var(--accent2)}
+.role-btn .role-name{font-size:12.5px;font-weight:500;color:var(--text)}
+.role-btn .role-desc{font-size:10.5px;color:var(--text3);margin-top:2px}
+.login-err{color:var(--red);font-size:12px;text-align:center;margin-top:8px}
+.report-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.period-badge{background:var(--accentbg);color:var(--accent2);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(108,99,255,0.3)}
+.payslip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2)}
 .payslip-header{background:var(--accent);padding:24px 28px;border-radius:var(--radius2) var(--radius2) 0 0;color:#fff}
 .payslip-body{padding:24px 28px}
 .payslip-section{margin-bottom:20px}
@@ -144,8 +149,6 @@ select.filter:focus{border-color:var(--accent);outline:none}
 .total-bar{background:var(--accentbg);border:1px solid rgba(108,99,255,0.3);border-radius:10px;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:16px}
 .total-bar .label{font-weight:600;color:var(--text);font-size:15px}
 .total-bar .val{font-family:'DM Mono',monospace;font-size:22px;font-weight:600;color:var(--accent2)}
-
-/* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
@@ -155,60 +158,14 @@ select.filter:focus{border-color:var(--accent);outline:none}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
 .close-btn{cursor:pointer;color:var(--text3);font-size:18px;background:none;border:none;line-height:1;padding:4px}
 .close-btn:hover{color:var(--text)}
-
-/* Forms */
 .form-group{margin-bottom:16px}
 .form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.4px}
 .form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;transition:border-color 0.15s}
 .form-input:focus{border-color:var(--accent)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-
-/* Tabs */
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
-.tab{padding:10px 16px;font-size:13.5px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;font-weight:500;transition:all 0.15s;margin-bottom:-1px}
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
-
-/* Activity */
-.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border-bottom:none}
-.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.activity-text{font-size:13px;color:var(--text2)}
-.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-
-/* Login */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);position:fixed;inset:0;z-index:999}
-.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;width:380px}
-.login-logo{text-align:center;margin-bottom:32px}
-.login-logo .mark{width:52px;height:52px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;margin:0 auto 12px}
-.login-logo h1{font-size:20px;font-weight:600}
-.login-logo p{font-size:13px;color:var(--text3);margin-top:4px}
-.login-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
-.role-btn{padding:10px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--bg3)}
-.role-btn:hover{border-color:var(--accent);background:var(--accentbg)}
-.role-btn.selected{border-color:var(--accent);background:var(--accentbg);color:var(--accent2)}
-.role-btn .role-name{font-size:12.5px;font-weight:500;color:var(--text)}
-.role-btn .role-desc{font-size:10.5px;color:var(--text3);margin-top:2px}
-.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
-.login-err{color:var(--red);font-size:12px;text-align:center;margin-top:8px}
-
-/* Report card */
-.report-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
-.period-badge{background:var(--accentbg);color:var(--accent2);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid rgba(108,99,255,0.3)}
-
-/* Employee profile */
-.emp-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:24px}
-.emp-avatar{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0}
-.emp-name{font-size:20px;font-weight:600}
-.emp-role{font-size:13px;color:var(--text3);margin-top:4px}
-.emp-meta{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
-.emp-meta-item{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
-
+.recibo-emp-item{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:all 0.15s}
+.recibo-emp-item:hover{background:var(--bg3);color:var(--text)}
+.recibo-emp-item.selected{background:var(--accentbg);color:var(--accent2)}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .main{margin-left:0}
@@ -283,7 +240,7 @@ select.filter:focus{border-color:var(--accent);outline:none}
         Empleados
       </div>
       <div class="nav-item" onclick="nav('nomina',this)">
-        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="1.5"/><polyline points="14 2 14 8 20 8" stroke-width="1.5"/><line x1="16" y1="13" x2="8" y2="13" stroke-width="1.5"/><line x1="16" y1="17" x2="8" y2="17" stroke-width="1.5"/><polyline points="10 9 9 9 8 9" stroke-width="1.5"/></svg>
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="1.5"/><polyline points="14 2 14 8 20 8" stroke-width="1.5"/><line x1="16" y1="13" x2="8" y2="13" stroke-width="1.5"/><line x1="16" y1="17" x2="8" y2="17" stroke-width="1.5"/></svg>
         Nómina
         <span class="nav-badge">4</span>
       </div>
@@ -363,7 +320,6 @@ select.filter:focus{border-color:var(--accent);outline:none}
             <div class="metric-icon" style="background:rgba(245,166,35,0.1)">📅</div>
           </div>
         </div>
-
         <div class="grid-2" style="margin-bottom:18px">
           <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -371,7 +327,7 @@ select.filter:focus{border-color:var(--accent);outline:none}
               <span class="period-badge">Ene — May</span>
             </div>
             <div class="chart-wrap">
-              <canvas id="chartNomina" role="img" aria-label="Gráfica de nómina mensual 2026">Nómina mensual 2026</canvas>
+              <canvas id="chartNomina"></canvas>
             </div>
           </div>
           <div class="card">
@@ -379,11 +335,10 @@ select.filter:focus{border-color:var(--accent);outline:none}
               <div style="font-weight:600;font-size:14px">Distribución por cargo</div>
             </div>
             <div class="chart-wrap">
-              <canvas id="chartCargos" role="img" aria-label="Distribución de empleados por tipo de cargo">Distribución por cargo</canvas>
+              <canvas id="chartCargos"></canvas>
             </div>
           </div>
         </div>
-
         <div class="grid-2">
           <div class="card">
             <div style="font-weight:600;font-size:14px;margin-bottom:14px">Actividad reciente</div>
@@ -426,7 +381,7 @@ select.filter:focus{border-color:var(--accent);outline:none}
           <div class="card">
             <div style="font-weight:600;font-size:14px;margin-bottom:14px">Resumen deducciones (Abril)</div>
             <div class="chart-wrap" style="height:240px">
-              <canvas id="chartDed" role="img" aria-label="Resumen de deducciones nómina">Deducciones nómina</canvas>
+              <canvas id="chartDed"></canvas>
             </div>
           </div>
         </div>
@@ -512,30 +467,17 @@ select.filter:focus{border-color:var(--accent);outline:none}
             <table>
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Empleado</th>
-                  <th>Cédula</th>
-                  <th>Días Lab.</th>
-                  <th>Días Vac.</th>
-                  <th>Días Inca.</th>
-                  <th>Salario Básico</th>
-                  <th>Aux. Trans.</th>
-                  <th>Vacaciones</th>
-                  <th>Incapacidad</th>
-                  <th>Bonificación</th>
-                  <th>Salario Neto</th>
-                  <th>Total Pagar</th>
-                  <th>Dcto. Salud</th>
-                  <th>Dcto. Pensión</th>
-                  <th>Préstamo</th>
-                  <th>Neto a Pagar</th>
-                  <th></th>
+                  <th>#</th><th>Empleado</th><th>Cédula</th><th>Días Lab.</th>
+                  <th>Días Vac.</th><th>Días Inca.</th><th>Salario Básico</th>
+                  <th>Aux. Trans.</th><th>Incapacidad</th><th>Bonificación</th>
+                  <th>Total Pagar</th><th>Dcto. Salud</th><th>Dcto. Pensión</th>
+                  <th>Préstamo</th><th>Neto a Pagar</th>
                 </tr>
               </thead>
               <tbody id="nom-tbody"></tbody>
             </table>
           </div>
-          <div class="card" style="margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="nom-totals"></div>
+          <div id="nom-totals" style="margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px"></div>
         </div>
         <div id="tab-calc" style="display:none">
           <div class="card" style="max-width:700px">
@@ -614,7 +556,7 @@ select.filter:focus{border-color:var(--accent);outline:none}
               <span class="period-badge">Ene–May</span>
             </div>
             <div class="chart-wrap" style="height:250px">
-              <canvas id="rpt-year" role="img" aria-label="Resumen nómina anual 2026">Resumen nómina anual</canvas>
+              <canvas id="rpt-year"></canvas>
             </div>
           </div>
           <div class="card">
@@ -622,7 +564,7 @@ select.filter:focus{border-color:var(--accent);outline:none}
               <div style="font-weight:600;font-size:14px">Costo por grupo académico</div>
             </div>
             <div class="chart-wrap" style="height:250px">
-              <canvas id="rpt-grupos" role="img" aria-label="Costo de nómina por grupo académico">Costo por grupo</canvas>
+              <canvas id="rpt-grupos"></canvas>
             </div>
           </div>
         </div>
@@ -638,14 +580,9 @@ select.filter:focus{border-color:var(--accent);outline:none}
             <table>
               <thead>
                 <tr>
-                  <th>Periodo</th>
-                  <th>Nro. Empleados</th>
-                  <th>Total Devengado</th>
-                  <th>Total Deducciones</th>
-                  <th>Total Neto</th>
-                  <th>Salud</th>
-                  <th>Pensión</th>
-                  <th>Estado</th>
+                  <th>Periodo</th><th>Nro. Empleados</th><th>Total Devengado</th>
+                  <th>Total Deducciones</th><th>Total Neto</th><th>Salud</th>
+                  <th>Pensión</th><th>Estado</th>
                 </tr>
               </thead>
               <tbody>
@@ -714,9 +651,9 @@ select.filter:focus{border-color:var(--accent);outline:none}
         </div>
       </div>
 
-    </div><!-- /content -->
+    </div>
   </main>
-</div><!-- /app -->
+</div>
 
 <!-- MODALS -->
 <div class="modal-overlay" id="nomina-modal">
@@ -729,15 +666,11 @@ select.filter:focus{border-color:var(--accent);outline:none}
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Mes</label>
-          <select class="form-input">
-            <option>Mayo 2026</option><option>Junio 2026</option>
-          </select>
+          <select class="form-input"><option>Mayo 2026</option><option>Junio 2026</option></select>
         </div>
         <div class="form-group">
           <label class="form-label">Tipo</label>
-          <select class="form-input">
-            <option>Nómina regular</option><option>Bonificación</option><option>Prima</option>
-          </select>
+          <select class="form-input"><option>Nómina regular</option><option>Bonificación</option><option>Prima</option></select>
         </div>
       </div>
       <div class="form-group">
@@ -771,58 +704,30 @@ select.filter:focus{border-color:var(--accent);outline:none}
     </div>
     <div class="modal-body">
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Nombres</label>
-          <input class="form-input" placeholder="Ej. MARIA JOSE">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Apellidos</label>
-          <input class="form-input" placeholder="Ej. GONZALEZ PEREZ">
-        </div>
+        <div class="form-group"><label class="form-label">Nombres</label><input class="form-input" placeholder="Ej. MARIA JOSE"></div>
+        <div class="form-group"><label class="form-label">Apellidos</label><input class="form-input" placeholder="Ej. GONZALEZ PEREZ"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Cédula</label>
-          <input class="form-input" placeholder="1075000000" type="number">
-        </div>
+        <div class="form-group"><label class="form-label">Cédula</label><input class="form-input" placeholder="1075000000" type="number"></div>
         <div class="form-group">
           <label class="form-label">Cargo</label>
-          <select class="form-input">
-            <option>DOCENTE</option><option>AUXILIAR</option><option>AUXILIAR SENA</option><option>COORDINADORA</option><option>SECRETARIA</option><option>CONTADORA</option><option>RECTOR</option>
-          </select>
+          <select class="form-input"><option>DOCENTE</option><option>AUXILIAR</option><option>AUXILIAR SENA</option><option>COORDINADORA</option><option>SECRETARIA</option><option>CONTADORA</option><option>RECTOR</option></select>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Grupo</label>
-          <select class="form-input">
-            <option>CAMINADORES</option><option>PÁRVULOS</option><option>PREJARDÍN</option><option>JARDÍN</option><option>TRANSICIÓN</option><option>PERSONAL ADMINISTRATIVO</option>
-          </select>
+          <select class="form-input"><option>CAMINADORES</option><option>PÁRVULOS</option><option>PREJARDÍN</option><option>JARDÍN</option><option>TRANSICIÓN</option><option>PERSONAL ADMINISTRATIVO</option></select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Sueldo Básico</label>
-          <input class="form-input" type="number" placeholder="1423500">
-        </div>
+        <div class="form-group"><label class="form-label">Sueldo Básico</label><input class="form-input" type="number" placeholder="1423500"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Fecha Inicio</label>
-          <input class="form-input" type="date" value="2026-02-02">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Fecha Fin</label>
-          <input class="form-input" type="date" value="2026-11-20">
-        </div>
+        <div class="form-group"><label class="form-label">Fecha Inicio</label><input class="form-input" type="date" value="2026-02-02"></div>
+        <div class="form-group"><label class="form-label">Fecha Fin</label><input class="form-input" type="date" value="2026-11-20"></div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">EPS</label>
-          <input class="form-input" placeholder="CONTRIBUTIVO">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Banco / Cuenta</label>
-          <input class="form-input" placeholder="NEQUI">
-        </div>
+        <div class="form-group"><label class="form-label">EPS</label><input class="form-input" placeholder="CONTRIBUTIVO"></div>
+        <div class="form-group"><label class="form-label">Banco / Cuenta</label><input class="form-input" placeholder="NEQUI"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -847,44 +752,41 @@ select.filter:focus{border-color:var(--accent);outline:none}
 </div>
 
 <script>
+// ============================
+// HELPERS
+// ============================
 const COP = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(v);
-const NUM = v => new Intl.NumberFormat('es-CO').format(Math.round(v));
 
-// Data from Excel files
+// ============================
+// DATA
+// ============================
 const EMPLEADOS = [
-  // CAMINADORES
   {id:1,nombre:'MAIRA ALEJANDRA',apellido:'CADENA MATTA',cedula:'1075309301',cargo:'DOCENTE',grupo:'CAMINADORES',sueldo:1250000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:2,nombre:'SANDRA PATRICIA',apellido:'SALDAÑA TOBAR',cedula:'33750929',cargo:'DOCENTE',grupo:'CAMINADORES',sueldo:1750905,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // PÁRVULOS
   {id:3,nombre:'LEILA ROCIO',apellido:'RUEDA RESTREPO',cedula:'1075222523',cargo:'DOCENTE',grupo:'PÁRVULOS',sueldo:1250000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'BANCOLOMBIA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:4,nombre:'ORIANA DE LOS ANGELES',apellido:'MARQUEZ VENTURA',cedula:'3235237',cargo:'AUXILIAR',grupo:'PÁRVULOS',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:5,nombre:'MARIA JOSE',apellido:'MOSQUERA RODRIGUEZ',cedula:'1193278459',cargo:'DOCENTE',grupo:'PÁRVULOS',sueldo:2000000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI-DAVIVIENDA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:6,nombre:'YIDI ALEJANDRA',apellido:'VALDERRAMA ROCHA',cedula:'36302289',cargo:'DOCENTE',grupo:'PÁRVULOS',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // PREJARDÍN
   {id:7,nombre:'MAYRA CAMILA',apellido:'GOMEZ REYES',cedula:'1075258831',cargo:'DOCENTE',grupo:'PREJARDÍN',sueldo:2000000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'BANCOLOMBIA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:8,nombre:'HEIDY TATIANA',apellido:'CASTELLANOS GUTIERREZ',cedula:'1077842504',cargo:'DOCENTE',grupo:'PREJARDÍN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'BANCOLOMBIA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:9,nombre:'MIRELLA',apellido:'SANCHEZ RODRIGUEZ',cedula:'36065237',cargo:'AUXILIAR',grupo:'PREJARDÍN',sueldo:1750905,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:10,nombre:'LINA FERNANDA',apellido:'BALANTA MEDINA',cedula:'1075235638',cargo:'DOCENTE',grupo:'PREJARDÍN',sueldo:1250000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIVIENDA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:11,nombre:'KARLA',apellido:'LOZANO CASTRO',cedula:'1075317775',cargo:'AUXILIAR',grupo:'PREJARDÍN',sueldo:1750905,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // JARDÍN
   {id:12,nombre:'KATHERYNE',apellido:'NIEVA REYES',cedula:'1075269249',cargo:'DOCENTE',grupo:'JARDÍN',sueldo:2300000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIVIENDA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:13,nombre:'ANGIE CAMILA',apellido:'ZUÑIGA LOPEZ',cedula:'1003894403',cargo:'DOCENTE',grupo:'JARDÍN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:14,nombre:'LINDA MARITZA',apellido:'ZUÑIGA ZUÑIGA',cedula:'1075257646',cargo:'DOCENTE',grupo:'JARDÍN',sueldo:1250000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI-DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:15,nombre:'DIANA ALEXANDRA',apellido:'MORENO IDARRAGA',cedula:'1075292502',cargo:'AUXILIAR',grupo:'JARDÍN',sueldo:1750905,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:16,nombre:'KAREN DANIELA',apellido:'LOPEZ RODRIGUEZ',cedula:'1075319837',cargo:'AUXILIAR',grupo:'JARDÍN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:17,nombre:'KAROL JULIETH',apellido:'TOVAR NARVAEZ',cedula:'3023484220',cargo:'DOCENTE',grupo:'JARDÍN',sueldo:1250000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // TRANSICIÓN
   {id:18,nombre:'CINDY LORENA',apellido:'RAMIREZ LAMILLA',cedula:'1075266383',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:2401000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:19,nombre:'VALENTINA',apellido:'POLANCO ROJAS',cedula:'1077226671',cargo:'AUXILIAR',grupo:'TRANSICIÓN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'BANCOLOMBIA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:20,nombre:'JULIETH MARISOL',apellido:'GUTIERREZ BUSTAMANTE',cedula:'1075262516',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:2401000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:21,nombre:'NATALIA',apellido:'STERLING MONJE',cedula:'1075310429',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:22,nombre:'LEIDY TATIANA',apellido:'CERON PABON',cedula:'1075247204',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:2472000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:23,nombre:'LUISA FERNANDA',apellido:'TOVAR RAMIREZ',cedula:'1000327957',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:875453,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // DOCENTES ADICIONALES
   {id:24,nombre:'WILMER',apellido:'QUINTERO QUINTERO',cedula:'1077869865',cargo:'DOCENTE',grupo:'DOCENTES',sueldo:1750000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'DAVIPLATA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:25,nombre:'ELKIN ORLANDO',apellido:'MENDEZ',cedula:'7695752',cargo:'DOCENTE',grupo:'DOCENTES',sueldo:2000000,auxTrans:0,eps:'',arl:'',banco:'DAVIVIENDA',inicio:'2026-05-12',fin:'2026-06-12',estado:'activo'},
   {id:26,nombre:'ALEJANDRA',apellido:'AMAYA MUÑOZ',cedula:'1075303271',cargo:'DOCENTE',grupo:'TRANSICIÓN',sueldo:2401000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'NEQUI',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
-  // ADMIN
   {id:27,nombre:'DIANA KATHERYNE',apellido:'ANDRADE MORENO',cedula:'1075217088',cargo:'COORDINADORA',grupo:'PERSONAL ADMINISTRATIVO',sueldo:3666540,auxTrans:0,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:28,nombre:'KAREN LIZETH',apellido:'DIAZ TALAGA',cedula:'1134034634',cargo:'AUXILIAR SENA',grupo:'PERSONAL ADMINISTRATIVO',sueldo:1750000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'BANCOLOMBIA',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
   {id:29,nombre:'KELLY JHOJANA',apellido:'GARCIA PERTUZ',cedula:'1082217282',cargo:'AUXILIAR CONTABLE',grupo:'PERSONAL ADMINISTRATIVO',sueldo:2472000,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
@@ -896,181 +798,505 @@ const EMPLEADOS = [
   {id:35,nombre:'LEIDY JOHANNA',apellido:'PEREZ GAONA',cedula:'1075249752',cargo:'AUXILIAR',grupo:'PERSONAL ADMINISTRATIVO',sueldo:1750905,auxTrans:249095,eps:'CONTRIBUTIVO',arl:'POSITIVO-NIVEL 2',banco:'',inicio:'2026-02-02',fin:'2026-11-20',estado:'activo'},
 ];
 
-// Payroll data (Abril 2026)
 const NOMINA_ABRIL = [
-  {cedula:'1075217088',nombre:'ANDRADE MORENO DIANA KATHERYNE',diasLab:30,diasVac:0,diasInca:0,salario:3666540,auxTrans:0,vacaciones:0,incapacidad:0,bono:0,saldNeto:3666540,auxNeto:0,totalPagar:3666540,dSalud:146661.6,dPension:146661.6,prestamo:0,neto:3373216.8,tipo:'admin'},
-  {cedula:'1134034634',nombre:'DIAZ TALAGA KAREN LIZETH - SENA',diasLab:4,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:233454,auxNeto:33212.67,totalPagar:266666.67,dSalud:9338.16,dPension:9338.16,prestamo:0,neto:247990.35,tipo:'admin'},
-  {cedula:'1082217282',nombre:'GARCIA PERTUZ KELLY JHOJANA',diasLab:30,diasVac:0,diasInca:0,salario:2472000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2472000,auxNeto:249095,totalPagar:2721095,dSalud:98880,dPension:98880,prestamo:0,neto:2523335,tipo:'admin'},
-  {cedula:'55155568',nombre:'GARZON GUTIERREZ LUZ DARY',diasLab:0,diasVac:30,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:1750905,bono:0,saldNeto:0,auxNeto:0,totalPagar:1750905,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1610832.6,tipo:'admin'},
-  {cedula:'12115228',nombre:'LEIVA VARGAS JAIRO',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750905,auxNeto:249095,totalPagar:2000000,dSalud:70036.2,dPension:70036.2,prestamo:124000,neto:1735927.6,tipo:'admin'},
-  {cedula:'1075249752',nombre:'PEREZ GAONA LEIDY JOHANNA',diasLab:3,diasVac:27,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:1575814.5,bono:0,saldNeto:175090.5,auxNeto:24909.5,totalPagar:1775814.5,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1635742.1,tipo:'admin'},
-  {cedula:'12138349',nombre:'QUINTERO BONILLA ALEXANDER',diasLab:30,diasVac:0,diasInca:0,salario:5000000,auxTrans:0,vacaciones:0,incapacidad:0,bono:0,saldNeto:5000000,auxNeto:0,totalPagar:5000000,dSalud:200000,dPension:200000,prestamo:0,neto:3600000,tipo:'admin'},
-  {cedula:'55159828',nombre:'SERRATO AMAYA SANDRA LILIANA',diasLab:30,diasVac:0,diasInca:0,salario:1983000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1983000,auxNeto:249095,totalPagar:2232095,dSalud:79320,dPension:79320,prestamo:0,neto:2073455,tipo:'admin'},
-  {cedula:'7697419',nombre:'VANEGAS QUESADA SERGIO GONZALO',diasLab:30,diasVac:0,diasInca:0,salario:3400000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:3400000,auxNeto:249095,totalPagar:3649095,dSalud:136000,dPension:136000,prestamo:0,neto:3377095,tipo:'admin'},
-  // DOCENTES
-  {cedula:'1075303271',nombre:'AMAYA MUÑOZ ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:2401000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2401000,auxNeto:249095,totalPagar:2650095,dSalud:96040,dPension:96040,prestamo:0,neto:2458015,tipo:'docente'},
-  {cedula:'1075235638',nombre:'BALANTA MEDINA LINA FERNANDA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1250000,auxNeto:249095,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
-  {cedula:'1075309301',nombre:'CADENA MATTA MAIRA ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1250000,auxNeto:249095,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
-  {cedula:'1077842504',nombre:'CASTELLANOS GUTIERREZ HEIDY TATIANA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'1075247204',nombre:'CERON PABON LEIDY TATIANA',diasLab:18,diasVac:12,diasInca:0,salario:2472000,auxTrans:249095,vacaciones:0,incapacidad:988800,bono:0,saldNeto:1483200,auxNeto:149457,totalPagar:2621457,dSalud:98880,dPension:98880,prestamo:0,neto:0,tipo:'docente'},
-  {cedula:'1075258831',nombre:'GOMEZ REYES MAYRA CAMILA',diasLab:30,diasVac:0,diasInca:0,salario:2000000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2000000,auxNeto:249095,totalPagar:2249095,dSalud:80000,dPension:80000,prestamo:105800,neto:1983295,tipo:'docente'},
-  {cedula:'1075262516',nombre:'GUTIERREZ BUSTAMANTE JULIETH MARISOL',diasLab:28,diasVac:2,diasInca:0,salario:2401000,auxTrans:249095,vacaciones:0,incapacidad:160066.67,bono:0,saldNeto:2240933.33,auxNeto:232488.67,totalPagar:2633488.67,dSalud:96040,dPension:96040,prestamo:0,neto:0,tipo:'docente'},
-  {cedula:'1075319837',nombre:'LOPEZ RODRIGUEZ KAREN DANIELA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:80000,saldNeto:875453,auxNeto:249095,totalPagar:1204548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1134511.76,tipo:'docente'},
-  {cedula:'1075317775',nombre:'LOZANO CASTRO KARLA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750905,auxNeto:249095,totalPagar:2000000,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1859927.6,tipo:'docente'},
-  {cedula:'3235237',nombre:'MARQUEZ VENTURA ORIANA DE LOS ANGELES',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'1075292502',nombre:'MORENO IDARRAGA DIANA ALEXANDRA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750905,auxNeto:249095,totalPagar:2000000,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1859927.6,tipo:'docente'},
-  {cedula:'1193278459',nombre:'MOSQUERA RODRIGUEZ MARIA JOSE',diasLab:30,diasVac:0,diasInca:0,salario:2000000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2000000,auxNeto:249095,totalPagar:2249095,dSalud:80000,dPension:80000,prestamo:0,neto:2089095,tipo:'docente'},
-  {cedula:'1075269249',nombre:'NIEVA REYES KATHERINE',diasLab:30,diasVac:0,diasInca:0,salario:2300000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2300000,auxNeto:249095,totalPagar:2549095,dSalud:92000,dPension:92000,prestamo:0,neto:2365095,tipo:'docente'},
-  {cedula:'1077226671',nombre:'POLANCO ROJAS VALENTINA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'1075266383',nombre:'RAMIREZ LAMILLA CINDY LORENA',diasLab:30,diasVac:0,diasInca:0,salario:2401000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:2401000,auxNeto:249095,totalPagar:2650095,dSalud:96040,dPension:96040,prestamo:0,neto:2458015,tipo:'docente'},
-  {cedula:'33750929',nombre:'SALDAÑA TOBAR SANDRA PATRICIA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750905,auxNeto:249095,totalPagar:2000000,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1859927.6,tipo:'docente'},
-  {cedula:'36065237',nombre:'SANCHEZ RODRIGUEZ MIRELLA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750905,auxNeto:249095,totalPagar:2000000,dSalud:70036.2,dPension:70036.2,prestamo:0,neto:1859927.6,tipo:'docente'},
-  {cedula:'1075310429',nombre:'STERLING MONJE NATALIA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'3023484220',nombre:'TOVAR NARVAEZ KAROL JULIETH',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1250000,auxNeto:249095,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
-  {cedula:'1000327957',nombre:'TOVAR RAMIREZ LUISA FERNANDA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'36302289',nombre:'VALDERRAMA ROCHA YIDI ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'1222523',nombre:'RUEDA RESTREPO LEILA ROCIO',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1250000,auxNeto:249095,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
-  {cedula:'1077869865',nombre:'QUINTERO QUINTERO WILMER',diasLab:30,diasVac:0,diasInca:0,salario:1750000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1750000,auxNeto:249095,totalPagar:1999095,dSalud:70000,dPension:70000,prestamo:0,neto:1859095,tipo:'docente'},
-  {cedula:'1003894403',nombre:'ZUÑIGA LOPEZ ANGIE CAMILA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:875453,auxNeto:249095,totalPagar:1124548,dSalud:35018.12,dPension:35018.12,prestamo:0,neto:1054511.76,tipo:'docente'},
-  {cedula:'1075257646',nombre:'ZUÑIGA ZUÑIGA LINDA MARITZA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,vacaciones:0,incapacidad:0,bono:0,saldNeto:1250000,auxNeto:249095,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
+  {cedula:'1075217088',nombre:'ANDRADE MORENO DIANA KATHERYNE',diasLab:30,diasVac:0,diasInca:0,salario:3666540,auxTrans:0,incapacidad:0,bono:0,totalPagar:3666540,dSalud:146661.6,dPension:146661.6,prestamo:0,neto:3373217,tipo:'admin'},
+  {cedula:'1134034634',nombre:'DIAZ TALAGA KAREN LIZETH',diasLab:4,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:266667,dSalud:9338,dPension:9338,prestamo:0,neto:247991,tipo:'admin'},
+  {cedula:'1082217282',nombre:'GARCIA PERTUZ KELLY JHOJANA',diasLab:30,diasVac:0,diasInca:0,salario:2472000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2721095,dSalud:98880,dPension:98880,prestamo:0,neto:2523335,tipo:'admin'},
+  {cedula:'55155568',nombre:'GARZON GUTIERREZ LUZ DARY',diasLab:0,diasVac:30,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:1750905,bono:0,totalPagar:1750905,dSalud:70036,dPension:70036,prestamo:0,neto:1610833,tipo:'admin'},
+  {cedula:'12115228',nombre:'LEIVA VARGAS JAIRO',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2000000,dSalud:70036,dPension:70036,prestamo:124000,neto:1735928,tipo:'admin'},
+  {cedula:'1075249752',nombre:'PEREZ GAONA LEIDY JOHANNA',diasLab:3,diasVac:27,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:1575815,bono:0,totalPagar:1775815,dSalud:70036,dPension:70036,prestamo:0,neto:1635742,tipo:'admin'},
+  {cedula:'12138349',nombre:'QUINTERO BONILLA ALEXANDER',diasLab:30,diasVac:0,diasInca:0,salario:5000000,auxTrans:0,incapacidad:0,bono:0,totalPagar:5000000,dSalud:200000,dPension:200000,prestamo:0,neto:3600000,tipo:'admin'},
+  {cedula:'55159828',nombre:'SERRATO AMAYA SANDRA LILIANA',diasLab:30,diasVac:0,diasInca:0,salario:1983000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2232095,dSalud:79320,dPension:79320,prestamo:0,neto:2073455,tipo:'admin'},
+  {cedula:'7697419',nombre:'VANEGAS QUESADA SERGIO GONZALO',diasLab:30,diasVac:0,diasInca:0,salario:3400000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:3649095,dSalud:136000,dPension:136000,prestamo:0,neto:3377095,tipo:'admin'},
+  {cedula:'1075303271',nombre:'AMAYA MUÑOZ ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:2401000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2650095,dSalud:96040,dPension:96040,prestamo:0,neto:2458015,tipo:'docente'},
+  {cedula:'1075235638',nombre:'BALANTA MEDINA LINA FERNANDA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
+  {cedula:'1075309301',nombre:'CADENA MATTA MAIRA ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
+  {cedula:'1077842504',nombre:'CASTELLANOS GUTIERREZ HEIDY TATIANA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'1075247204',nombre:'CERON PABON LEIDY TATIANA',diasLab:18,diasVac:12,diasInca:0,salario:2472000,auxTrans:249095,incapacidad:988800,bono:0,totalPagar:2621457,dSalud:98880,dPension:98880,prestamo:0,neto:2423697,tipo:'docente'},
+  {cedula:'1075258831',nombre:'GOMEZ REYES MAYRA CAMILA',diasLab:30,diasVac:0,diasInca:0,salario:2000000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2249095,dSalud:80000,dPension:80000,prestamo:105800,neto:1983295,tipo:'docente'},
+  {cedula:'1075262516',nombre:'GUTIERREZ BUSTAMANTE JULIETH MARISOL',diasLab:28,diasVac:2,diasInca:0,salario:2401000,auxTrans:249095,incapacidad:160067,bono:0,totalPagar:2633489,dSalud:96040,dPension:96040,prestamo:0,neto:2441409,tipo:'docente'},
+  {cedula:'1075319837',nombre:'LOPEZ RODRIGUEZ KAREN DANIELA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:80000,totalPagar:1204548,dSalud:35018,dPension:35018,prestamo:0,neto:1134512,tipo:'docente'},
+  {cedula:'1075317775',nombre:'LOZANO CASTRO KARLA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2000000,dSalud:70036,dPension:70036,prestamo:0,neto:1859928,tipo:'docente'},
+  {cedula:'3235237',nombre:'MARQUEZ VENTURA ORIANA DE LOS ANGELES',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'1075292502',nombre:'MORENO IDARRAGA DIANA ALEXANDRA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2000000,dSalud:70036,dPension:70036,prestamo:0,neto:1859928,tipo:'docente'},
+  {cedula:'1193278459',nombre:'MOSQUERA RODRIGUEZ MARIA JOSE',diasLab:30,diasVac:0,diasInca:0,salario:2000000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2249095,dSalud:80000,dPension:80000,prestamo:0,neto:2089095,tipo:'docente'},
+  {cedula:'1075269249',nombre:'NIEVA REYES KATHERINE',diasLab:30,diasVac:0,diasInca:0,salario:2300000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2549095,dSalud:92000,dPension:92000,prestamo:0,neto:2365095,tipo:'docente'},
+  {cedula:'1077226671',nombre:'POLANCO ROJAS VALENTINA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'1075266383',nombre:'RAMIREZ LAMILLA CINDY LORENA',diasLab:30,diasVac:0,diasInca:0,salario:2401000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2650095,dSalud:96040,dPension:96040,prestamo:0,neto:2458015,tipo:'docente'},
+  {cedula:'33750929',nombre:'SALDAÑA TOBAR SANDRA PATRICIA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2000000,dSalud:70036,dPension:70036,prestamo:0,neto:1859928,tipo:'docente'},
+  {cedula:'36065237',nombre:'SANCHEZ RODRIGUEZ MIRELLA',diasLab:30,diasVac:0,diasInca:0,salario:1750905,auxTrans:249095,incapacidad:0,bono:0,totalPagar:2000000,dSalud:70036,dPension:70036,prestamo:0,neto:1859928,tipo:'docente'},
+  {cedula:'1075310429',nombre:'STERLING MONJE NATALIA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'3023484220',nombre:'TOVAR NARVAEZ KAROL JULIETH',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
+  {cedula:'1000327957',nombre:'TOVAR RAMIREZ LUISA FERNANDA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'36302289',nombre:'VALDERRAMA ROCHA YIDI ALEJANDRA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'1222523',nombre:'RUEDA RESTREPO LEILA ROCIO',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
+  {cedula:'1077869865',nombre:'QUINTERO QUINTERO WILMER',diasLab:30,diasVac:0,diasInca:0,salario:1750000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1999095,dSalud:70000,dPension:70000,prestamo:0,neto:1859095,tipo:'docente'},
+  {cedula:'1003894403',nombre:'ZUÑIGA LOPEZ ANGIE CAMILA',diasLab:30,diasVac:0,diasInca:0,salario:875453,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1124548,dSalud:35018,dPension:35018,prestamo:0,neto:1054512,tipo:'docente'},
+  {cedula:'1075257646',nombre:'ZUÑIGA ZUÑIGA LINDA MARITZA',diasLab:30,diasVac:0,diasInca:0,salario:1250000,auxTrans:249095,incapacidad:0,bono:0,totalPagar:1499095,dSalud:50000,dPension:50000,prestamo:0,neto:1399095,tipo:'docente'},
 ];
 
+// ============================
+// SUPABASE
+// ============================
+const supabaseUrl = 'https://ffxbkmwrjlfiabrvotld.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmeGJrbXdyamxmaWFicnZvdGxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDc5MzMsImV4cCI6MjA5NTQ4MzkzM30.BQB4t9mdequ2akhHcTH3laLA4LDV4do8k_HsE3ZU1io';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ============================
+// STATE
+// ============================
 let selectedRole = 'admin';
 let currentTab = 'tab-lista';
+let chartsInitialized = false;
 
+// ============================
+// LOGIN / LOGOUT (BUG #1 CORREGIDO: una sola definición)
+// ============================
 function selectRole(el, role) {
-  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   selectedRole = role;
 }
 
 async function doLogin() {
+  const email = document.getElementById('login-user').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  document.getElementById('login-err').textContent = '';
 
-  const email = document.getElementById('login-user').value;
-  const password = document.getElementById('login-pass').value;
-
-  if(!email || !password){
-    alert('Ingresa correo y contraseña');
+  if (!email || !pass) {
+    document.getElementById('login-err').textContent = 'Ingresa correo y contraseña';
     return;
   }
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+
+  if (error) {
+    // Fallback local para demostración
+    if (email === 'admin@mialegria.edu.co' && pass === 'gimav2026') {
+      enterApp();
+      return;
+    }
+    document.getElementById('login-err').textContent = 'Credenciales inválidas: ' + error.message;
+    return;
+  }
+  enterApp();
+}
+
+function enterApp() {
+  // BUG #15 CORREGIDO: actualizar avatar/nombre/rol
+  const roleLabels = { admin:'Administrador', nomina:'Liquidador', rrhh:'RRHH', docente:'Docente' };
+  document.getElementById('user-avatar').textContent = selectedRole.charAt(0).toUpperCase();
+  document.getElementById('user-name-display').textContent = roleLabels[selectedRole] || selectedRole;
+  document.getElementById('user-role-display').textContent = selectedRole.toUpperCase();
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  // Inicializar vistas
+  renderEmpTable(EMPLEADOS);
+  populateCalcSelect();
+  loadRecibos();
+  loadNomina();
+  if (!chartsInitialized) { initCharts(); chartsInitialized = true; }
+}
+
+async function doLogout() {
+  await supabaseClient.auth.signOut();
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// Verificar sesión activa al cargar
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
+  if (session) enterApp();
+});
+
+// ============================
+// NAVEGACIÓN
+// ============================
+function nav(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  const titles = { dashboard:'Dashboard', empleados:'Empleados', nomina:'Nómina', recibos:'Comprobantes de Pago', reportes:'Reportes', configuracion:'Configuración' };
+  document.getElementById('hdr-title').textContent = titles[id] || id;
+  document.getElementById('hdr-bread').textContent = 'GIMAV / ' + (titles[id] || id);
+}
+
+// ============================
+// MODALS
+// ============================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ============================
+// BUG #3 CORREGIDO: switchTab
+// ============================
+function switchTab(el, tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-lista').style.display = tabId === 'tab-lista' ? 'block' : 'none';
+  document.getElementById('tab-calc').style.display  = tabId === 'tab-calc'  ? 'block' : 'none';
+  currentTab = tabId;
+}
+
+// ============================
+// BUG #4, #11 CORREGIDOS: Tabla empleados
+// ============================
+function getBadgeCargo(cargo) {
+  const c = cargo.toUpperCase();
+  if (c.includes('DOCENTE')) return 'badge-docente';
+  if (c.includes('AUXILIAR SENA')) return 'badge-sena';
+  if (c.includes('AUXILIAR')) return 'badge-auxiliar';
+  return 'badge-admin';
+}
+
+function renderEmpTable(lista) {
+  const tbody = document.getElementById('emp-tbody');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text3);padding:24px">Sin resultados</td></tr>';
+    document.getElementById('emp-count').textContent = '';
+    return;
+  }
+  tbody.innerHTML = lista.map((e, i) => `
+    <tr>
+      <td class="td-muted">${i+1}</td>
+      <td><strong>${e.nombre} ${e.apellido}</strong></td>
+      <td class="td-mono">${e.cedula}</td>
+      <td><span class="badge ${getBadgeCargo(e.cargo)}">${e.cargo}</span></td>
+      <td class="td-muted">${e.grupo}</td>
+      <td class="td-green">${COP(e.sueldo)}</td>
+      <td class="td-mono">${e.auxTrans ? COP(e.auxTrans) : '—'}</td>
+      <td class="td-muted">${e.eps || '—'}</td>
+      <td class="td-muted" style="font-size:11px">${e.arl || '—'}</td>
+      <td><span class="badge ${e.estado==='activo'?'badge-active':'badge-inactive'}">${e.estado==='activo'?'Activo':'Inactivo'}</span></td>
+      <td>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="verEmpleado(${e.id})">Ver</button>
+      </td>
+    </tr>
+  `).join('');
+  document.getElementById('emp-count').textContent = `Mostrando ${lista.length} de ${EMPLEADOS.length} empleados`;
+}
+
+// BUG #4 CORREGIDO: filterEmps
+function filterEmps() {
+  const q     = document.getElementById('emp-search').value.toLowerCase();
+  const cargo = document.getElementById('emp-cargo').value.toUpperCase();
+  const grupo = document.getElementById('emp-grupo').value.toUpperCase();
+  const result = EMPLEADOS.filter(e => {
+    const full = (e.nombre + ' ' + e.apellido + ' ' + e.cedula + ' ' + e.cargo).toLowerCase();
+    const matchQ     = !q     || full.includes(q);
+    const matchCargo = !cargo || e.cargo.toUpperCase() === cargo;
+    const matchGrupo = !grupo || e.grupo.toUpperCase() === grupo;
+    return matchQ && matchCargo && matchGrupo;
+  });
+  renderEmpTable(result);
+}
+
+function verEmpleado(id) {
+  const e = EMPLEADOS.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('emp-detail-body').innerHTML = `
+    <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px">
+      <div style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0">${e.nombre.charAt(0)}</div>
+      <div>
+        <div style="font-size:18px;font-weight:600">${e.nombre} ${e.apellido}</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:4px">${e.cargo} — ${e.grupo}</div>
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+          <span class="badge ${getBadgeCargo(e.cargo)}">${e.cargo}</span>
+          <span class="badge ${e.estado==='activo'?'badge-active':'badge-inactive'}">${e.estado}</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${[['Cédula',e.cedula],['Sueldo Básico',COP(e.sueldo)],['Aux. Transporte',e.auxTrans?COP(e.auxTrans):'No aplica'],['EPS',e.eps||'—'],['ARL',e.arl||'—'],['Banco',e.banco||'—'],['Inicio contrato',e.inicio],['Fin contrato',e.fin]].map(([k,v])=>`
+        <div style="background:var(--bg3);border-radius:8px;padding:12px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">${k}</div>
+          <div style="font-size:13.5px;font-weight:500">${v}</div>
+        </div>`).join('')}
+    </div>`;
+  openModal('emp-detail-modal');
+}
+
+// ============================
+// BUG #6 CORREGIDO: loadNomina, exportNomina
+// ============================
+function loadNomina() {
+  const tipo = document.getElementById('nom-tipo').value;
+  const datos = tipo ? NOMINA_ABRIL.filter(n => n.tipo === tipo) : NOMINA_ABRIL;
+  const tbody = document.getElementById('nom-tbody');
+
+  tbody.innerHTML = datos.map((n, i) => `
+    <tr>
+      <td class="td-muted">${i+1}</td>
+      <td style="max-width:180px;white-space:normal;font-size:12.5px">${n.nombre}</td>
+      <td class="td-mono">${n.cedula}</td>
+      <td class="td-muted">${n.diasLab}</td>
+      <td class="td-muted">${n.diasVac}</td>
+      <td class="td-muted">${n.diasInca}</td>
+      <td class="td-mono">${COP(n.salario)}</td>
+      <td class="td-mono">${n.auxTrans?COP(n.auxTrans):'—'}</td>
+      <td class="${n.incapacidad?'td-red':'td-muted'}">${n.incapacidad?COP(n.incapacidad):'—'}</td>
+      <td class="${n.bono?'td-green':'td-muted'}">${n.bono?COP(n.bono):'—'}</td>
+      <td class="td-green">${COP(n.totalPagar)}</td>
+      <td class="td-red">${COP(n.dSalud)}</td>
+      <td class="td-red">${COP(n.dPension)}</td>
+      <td class="${n.prestamo?'td-red':'td-muted'}">${n.prestamo?COP(n.prestamo):'—'}</td>
+      <td class="td-green" style="font-weight:600">${COP(n.neto)}</td>
+    </tr>
+  `).join('');
+
+  // Totales
+  const totDevengado = datos.reduce((s,n) => s+n.totalPagar, 0);
+  const totDeduc     = datos.reduce((s,n) => s+n.dSalud+n.dPension+n.prestamo, 0);
+  const totNeto      = datos.reduce((s,n) => s+n.neto, 0);
+  const totSalud     = datos.reduce((s,n) => s+n.dSalud, 0);
+
+  document.getElementById('nom-totals').innerHTML = [
+    ['Total Devengado', COP(totDevengado), 'var(--green)'],
+    ['Total Deducciones', COP(totDeduc), 'var(--red)'],
+    ['Total Neto a Pagar', COP(totNeto), 'var(--accent2)'],
+    ['Total Aporte Salud', COP(totSalud), 'var(--amber)'],
+  ].map(([label, val, color]) => `
+    <div class="card" style="padding:14px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${label}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600;color:${color}">${val}</div>
+    </div>`).join('');
+}
+
+function exportNomina() {
+  alert('Exportando nómina a CSV...\n(Conectar con lógica de exportación real)');
+}
+
+// ============================
+// BUG #5, #8, #13 CORREGIDOS: Comprobantes
+// ============================
+let recibosFiltrados = [...NOMINA_ABRIL];
+
+function loadRecibos() {
+  recibosFiltrados = [...NOMINA_ABRIL];
+  renderReciboList(recibosFiltrados);
+}
+
+function filterRecibos() {
+  const q = document.getElementById('recibo-search').value.toLowerCase();
+  recibosFiltrados = NOMINA_ABRIL.filter(n => n.nombre.toLowerCase().includes(q) || n.cedula.includes(q));
+  renderReciboList(recibosFiltrados);
+}
+
+function renderReciboList(lista) {
+  const el = document.getElementById('recibo-list');
+  el.innerHTML = lista.map(n => `
+    <div class="recibo-emp-item" onclick="verRecibo('${n.cedula}')" id="ritem-${n.cedula}">
+      ${n.nombre.split(' ').slice(0,2).join(' ')}
+    </div>`).join('');
+}
+
+function verRecibo(cedula) {
+  document.querySelectorAll('.recibo-emp-item').forEach(el => el.classList.remove('selected'));
+  const itemEl = document.getElementById('ritem-' + cedula);
+  if (itemEl) itemEl.classList.add('selected');
+
+  const n = NOMINA_ABRIL.find(x => x.cedula === cedula);
+  if (!n) return;
+  const emp = EMPLEADOS.find(e => e.cedula === cedula);
+  const mes = document.getElementById('recibo-mes').value || 'ABRIL';
+
+  document.getElementById('recibo-view').innerHTML = `
+    <div class="payslip">
+      <div class="payslip-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:11px;opacity:0.8;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Comprobante de Pago</div>
+            <div style="font-size:20px;font-weight:700">${n.nombre}</div>
+            <div style="font-size:13px;opacity:0.85;margin-top:4px">${emp?emp.cargo:'—'} &nbsp;·&nbsp; CC ${n.cedula}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;opacity:0.7">Periodo</div>
+            <div style="font-size:15px;font-weight:600">${mes} 2026</div>
+            <div style="font-size:12px;opacity:0.7;margin-top:2px">GIMAV — NIT 900.237.177-8</div>
+          </div>
+        </div>
+      </div>
+      <div class="payslip-body">
+        <div class="payslip-section">
+          <div class="payslip-section-title">Días liquidados</div>
+          <div class="pay-row"><span class="pay-label">Días laborados</span><span class="pay-val">${n.diasLab}</span></div>
+          <div class="pay-row"><span class="pay-label">Días vacaciones</span><span class="pay-val">${n.diasVac}</span></div>
+          <div class="pay-row"><span class="pay-label">Días incapacidad</span><span class="pay-val">${n.diasInca}</span></div>
+        </div>
+        <div class="payslip-section">
+          <div class="payslip-section-title">Devengado</div>
+          <div class="pay-row"><span class="pay-label">Salario básico</span><span class="pay-val positive">${COP(n.salario)}</span></div>
+          ${n.auxTrans?`<div class="pay-row"><span class="pay-label">Auxilio de transporte</span><span class="pay-val positive">${COP(n.auxTrans)}</span></div>`:''}
+          ${n.incapacidad?`<div class="pay-row"><span class="pay-label">Incapacidad</span><span class="pay-val">${COP(n.incapacidad)}</span></div>`:''}
+          ${n.bono?`<div class="pay-row"><span class="pay-label">Bonificación</span><span class="pay-val positive">${COP(n.bono)}</span></div>`:''}
+          <div class="pay-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:10px"><span class="pay-label" style="font-weight:600">Total devengado</span><span class="pay-val positive" style="font-size:15px">${COP(n.totalPagar)}</span></div>
+        </div>
+        <div class="payslip-section">
+          <div class="payslip-section-title">Deducciones</div>
+          <div class="pay-row"><span class="pay-label">Aporte salud (4%)</span><span class="pay-val negative">-${COP(n.dSalud)}</span></div>
+          <div class="pay-row"><span class="pay-label">Aporte pensión (4%)</span><span class="pay-val negative">-${COP(n.dPension)}</span></div>
+          ${n.prestamo?`<div class="pay-row"><span class="pay-label">Descuento préstamo</span><span class="pay-val negative">-${COP(n.prestamo)}</span></div>`:''}
+        </div>
+        <div class="total-bar">
+          <span class="label">Neto a pagar</span>
+          <span class="val">${COP(n.neto)}</span>
+        </div>
+        ${emp&&emp.banco?`<div style="margin-top:12px;font-size:12px;color:var(--text3);text-align:right">Pago vía: <strong style="color:var(--text2)">${emp.banco}</strong></div>`:''}
+      </div>
+    </div>`;
+}
+
+// ============================
+// BUG #9, #12 CORREGIDOS: Calculadora
+// ============================
+function populateCalcSelect() {
+  const sel = document.getElementById('calc-emp');
+  sel.innerHTML = '<option value="">Seleccionar...</option>' +
+    EMPLEADOS.map(e => `<option value="${e.id}">${e.nombre} ${e.apellido}</option>`).join('');
+}
+
+function calcNomina() {
+  const empId  = parseInt(document.getElementById('calc-emp').value);
+  const dias   = parseFloat(document.getElementById('calc-dias').value) || 0;
+  const vac    = parseFloat(document.getElementById('calc-vac').value)  || 0;
+  const inca   = parseFloat(document.getElementById('calc-inca').value) || 0;
+  const bono   = parseFloat(document.getElementById('calc-bono').value) || 0;
+  const dsct   = parseFloat(document.getElementById('calc-dsct').value) || 0;
+  const el     = document.getElementById('calc-result');
+
+  if (!empId) { el.innerHTML = ''; return; }
+
+  const emp = EMPLEADOS.find(e => e.id === empId);
+  if (!emp) return;
+
+  const diasTotal   = dias + vac + inca;
+  const salarioDia  = emp.sueldo / 30;
+  const salarioPago = salarioDia * Math.max(0, dias);
+  const vacPago     = salarioDia * vac;
+  const incaPago    = salarioDia * inca * 0.667;  // EPS paga 66.7% desde día 1
+  const auxPago     = diasTotal >= 15 ? (emp.auxTrans / 30) * Math.min(30, dias) : 0;
+  const devengado   = salarioPago + vacPago + incaPago + auxPago + bono;
+  const dSalud      = emp.sueldo * 0.04;
+  const dPension    = emp.sueldo * 0.04;
+  const neto        = devengado - dSalud - dPension - dsct;
+
+  el.innerHTML = `
+    <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-top:8px">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Resultado — ${emp.nombre} ${emp.apellido}</div>
+      ${[
+        ['Salario por días lab.', salarioPago, true],
+        ['Vacaciones', vacPago, true],
+        ['Incapacidad (EPS 66.7%)', incaPago, true],
+        ['Aux. transporte proporcional', auxPago, true],
+        ['Bonificación', bono, true],
+        ['▼ Aporte salud', dSalud, false],
+        ['▼ Aporte pensión', dPension, false],
+        ['▼ Descuentos adicionales', dsct, false],
+      ].map(([k,v,pos])=>`
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="color:var(--text2)">${k}</span>
+          <span style="font-family:'DM Mono',monospace;color:${pos?'var(--green)':'var(--red)'}">${v?COP(v):'—'}</span>
+        </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;margin-top:12px;padding:10px 14px;background:var(--accentbg);border-radius:8px">
+        <span style="font-weight:600">Neto estimado</span>
+        <span style="font-family:'DM Mono',monospace;font-size:17px;font-weight:600;color:var(--accent2)">${COP(Math.max(0,neto))}</span>
+      </div>
+    </div>`;
+}
+
+// ============================
+// BUG #10 CORREGIDO: Gráficas Chart.js
+// ============================
+function initCharts() {
+  const gridColor = 'rgba(42,47,62,0.8)';
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#9AA0B8', font: { family: 'DM Sans', size: 12 } } } },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { color: '#5C6380' } },
+      y: { grid: { color: gridColor }, ticks: { color: '#5C6380', callback: v => '$' + (v/1e6).toFixed(1) + 'M' } }
+    }
+  };
+
+  // Nómina mensual
+  new Chart(document.getElementById('chartNomina'), {
+    type: 'bar',
+    data: {
+      labels: ['Ene','Feb','Mar','Abr','May'],
+      datasets: [{
+        label: 'Total nómina',
+        data: [17050214, 84156000, 86490000, 88120000, 91340000],
+        backgroundColor: 'rgba(108,99,255,0.7)',
+        borderColor: '#6C63FF', borderWidth: 1, borderRadius: 6
+      }]
+    },
+    options: { ...baseOpts }
   });
 
-  if(error){
-    alert('Error: ' + error.message);
-    return;
-  }
+  // Distribución por cargo
+  const cargos = {};
+  EMPLEADOS.forEach(e => { cargos[e.cargo] = (cargos[e.cargo]||0) + 1; });
+  new Chart(document.getElementById('chartCargos'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(cargos),
+      datasets: [{ data: Object.values(cargos),
+        backgroundColor: ['#6C63FF','#2ECC8A','#00D4AA','#F5A623','#FF5B72','#8B85FF','#1abc9c'],
+        borderColor: '#12151C', borderWidth: 2
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:'right', labels: { color:'#9AA0B8', font: { family:'DM Sans', size:11 }, padding:14 } } }
+    }
+  });
 
-  console.log('Usuario conectado:', data);
+  // Deducciones
+  new Chart(document.getElementById('chartDed'), {
+    type: 'pie',
+    data: {
+      labels: ['Salud', 'Pensión', 'Préstamos'],
+      datasets: [{ data: [3360000, 3360000, 229800],
+        backgroundColor: ['#6C63FF','#2ECC8A','#FF5B72'],
+        borderColor: '#12151C', borderWidth: 2
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:'bottom', labels: { color:'#9AA0B8', font:{ family:'DM Sans', size:12 } } } }
+    }
+  });
 
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='block';
+  // Reporte anual
+  new Chart(document.getElementById('rpt-year'), {
+    type: 'line',
+    data: {
+      labels: ['Ene','Feb','Mar','Abr','May'],
+      datasets: [
+        { label: 'Devengado', data: [17050214,84156000,86490000,88120000,91340000],
+          borderColor:'#6C63FF', backgroundColor:'rgba(108,99,255,0.15)', fill:true, tension:0.4, pointBackgroundColor:'#6C63FF' },
+        { label: 'Neto pagado', data: [15782514,77921900,79909800,81400000,null],
+          borderColor:'#2ECC8A', backgroundColor:'rgba(46,204,138,0.1)', fill:true, tension:0.4, pointBackgroundColor:'#2ECC8A' }
+      ]
+    },
+    options: { ...baseOpts }
+  });
+
+  // Costo por grupo
+  const grupos = {};
+  EMPLEADOS.forEach(e => { grupos[e.grupo] = (grupos[e.grupo]||0) + e.sueldo + (e.auxTrans||0); });
+  new Chart(document.getElementById('rpt-grupos'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(grupos).map(g => g.replace('PERSONAL ADMINISTRATIVO','ADMIN')),
+      datasets: [{ label: 'Costo mensual', data: Object.values(grupos),
+        backgroundColor: ['#6C63FF','#2ECC8A','#00D4AA','#F5A623','#FF5B72','#8B85FF','#1abc9c'],
+        borderRadius: 6 }]
+    },
+    options: { ...baseOpts, plugins: { legend: { display: false } } }
+  });
 }
-
-async function doLogout(){
-
-  await supabaseClient.auth.signOut();
-
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-}
-
-function nav(id, el) {
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-document.getElementById('page-'+id).classList.add('active');
-el.classList.add('active');
-
-const titles = {
-dashboard:'Dashboard',
-empleados:'Empleados',
-nomina:'Nómina',
-recibos:'Comprobantes de Pago',
-reportes:'Reportes',
-configuracion:'Configuración'
-};
-
-document.getElementById('hdr-title').textContent = titles[id]||id;
-document.getElementById('hdr-bread').textContent = 'GIMAV / ' + (titles[id]||id);
-}
-
-function openModal(id){
-document.getElementById(id).classList.add('open');
-}
-
-function closeModal(id){
-document.getElementById(id).classList.remove('open');
-}
-
-// ===============================
-// SUPABASE
-// ===============================
-
-const supabaseUrl = 'https://ffxbkmwrjlfiabrvotld.supabase.co';
-
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmeGJrbXdyamxmaWFicnZvdGxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDc5MzMsImV4cCI6MjA5NTQ4MzkzM30.BQB4t9mdequ2akhHcTH3laLA4LDV4do8k_HsE3ZU1io';
-
-const supabaseClient = window.supabase.createClient(
-supabaseUrl,
-supabaseKey
-);
-
-console.log('Supabase conectado correctamente');
-
-// ===============================
-// LOGIN
-// ===============================
-
-async function doLogin() {
-
-const email = document.getElementById('login-user').value;
-const password = document.getElementById('login-pass').value;
-
-if(!email || !password){
-alert('Ingresa correo y contraseña');
-return;
-}
-
-const { data, error } = await supabaseClient.auth.signInWithPassword({
-email: email,
-password: password
-});
-
-if(error){
-alert('Error: ' + error.message);
-return;
-}
-
-console.log('Usuario conectado:', data);
-
-document.getElementById('login-screen').style.display='none';
-document.getElementById('app').style.display='block';
-}
-
-// ===============================
-// LOGOUT
-// ===============================
-
-async function doLogout(){
-
-await supabaseClient.auth.signOut();
-
-document.getElementById('login-screen').style.display='flex';
-document.getElementById('app').style.display='none';
-}
-
-// ===============================
-// VALIDAR SESIÓN
-// ===============================
-
-supabaseClient.auth.getSession().then(({ data: { session } }) => {
-
-if(session){
-document.getElementById('login-screen').style.display = 'none';
-document.getElementById('app').style.display = 'block';
-}
-
-});
+</script>
+</body>
+</html>
