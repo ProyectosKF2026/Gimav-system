@@ -1273,32 +1273,6 @@ function initReportCharts() {
   const r2 = document.getElementById('rpt-grupos');
   if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
 }
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-const supabaseUrl = 'https://ffxbkmwrjlfiabrvotld.supabase.co';
-
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmeGJrbXdyamxmaWFicnZvdGxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDc5MzMsImV4cCI6MjA5NTQ4MzkzM30.BQB4t9mdequ2akhHcTH3laLA4LDV4do8k_HsE3ZU1io';
-    
-const supabaseClient = window.supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-);
-
-console.log('Supabase conectado correctamente');
-
-supabaseClient.auth.getSession().then(({ data: { session } }) => {
-
-  if(session){
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-  }
-
-});
-</script>
-  
-if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
-}
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
