@@ -978,313 +978,105 @@ async function doLogout(){
   document.getElementById('app').style.display='none';
 }
 
+// ===============================
+// SUPABASE LOGIN GIMAV
+// PEGAR DESDE LA LÍNEA 981
+// Y BORRAR TODO LO DEMÁS
+// ===============================
+
 function nav(id, el) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  el.classList.add('active');
-  const titles = {dashboard:'Dashboard',empleados:'Empleados',nomina:'Nómina',recibos:'Comprobantes de Pago',reportes:'Reportes',configuracion:'Configuración'};
-  document.getElementById('hdr-title').textContent = titles[id]||id;
-  document.getElementById('hdr-bread').textContent = 'GIMAV / ' + (titles[id]||id);
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+document.getElementById('page-'+id).classList.add('active');
+el.classList.add('active');
+
+const titles = {
+dashboard:'Dashboard',
+empleados:'Empleados',
+nomina:'Nómina',
+recibos:'Comprobantes de Pago',
+reportes:'Reportes',
+configuracion:'Configuración'
+};
+
+document.getElementById('hdr-title').textContent = titles[id]||id;
+document.getElementById('hdr-bread').textContent = 'GIMAV / ' + (titles[id]||id);
 }
 
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-
-function switchTab(el, tabId) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  ['tab-lista','tab-calc'].forEach(t=>{ const e=document.getElementById(t); if(e) e.style.display='none'; });
-  document.getElementById(tabId).style.display='block';
+function openModal(id){
+document.getElementById(id).classList.add('open');
 }
 
-function badgeCargo(c) {
-  if(!c) return '';
-  const map = {'DOCENTE':'badge-docente','AUXILIAR':'badge-auxiliar','AUXILIAR SENA':'badge-sena','AUXILIAR CONTABLE':'badge-auxiliar','COORDINADORA':'badge-admin','RECTOR':'badge-admin','SECRETARIA':'badge-admin','CONTADORA':'badge-admin','COORDINADOR ADMINISTRATIVO':'badge-admin'};
-  return `<span class="badge ${map[c]||'badge-inactive'}">${c}</span>`;
+function closeModal(id){
+document.getElementById(id).classList.remove('open');
 }
 
-function renderEmpleados(data) {
-  data = data || EMPLEADOS;
-  const tb = document.getElementById('emp-tbody');
-  tb.innerHTML = data.map(e=>`
-    <tr>
-      <td class="td-muted">${e.id}</td>
-      <td><div style="font-weight:500">${e.nombre}</div><div class="td-muted" style="font-size:12px">${e.apellido}</div></td>
-      <td class="td-mono td-muted">${e.cedula}</td>
-      <td>${badgeCargo(e.cargo)}</td>
-      <td class="td-muted">${e.grupo}</td>
-      <td class="td-green">${COP(e.sueldo)}</td>
-      <td class="td-mono td-muted">${e.auxTrans?COP(e.auxTrans):'—'}</td>
-      <td class="td-muted" style="font-size:12px">${e.eps||'—'}</td>
-      <td class="td-muted" style="font-size:12px">${e.arl||'—'}</td>
-      <td><span class="badge ${e.estado==='activo'?'badge-active':'badge-inactive'}">${e.estado==='activo'?'Activo':'Inactivo'}</span></td>
-      <td>
-        <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="showEmpDetail(${e.id})">Ver</button>
-      </td>
-    </tr>`).join('');
-  document.getElementById('emp-count').textContent = `Mostrando ${data.length} de ${EMPLEADOS.length} empleados`;
-}
+// ===============================
+// SUPABASE
+// ===============================
 
-function filterEmps() {
-  const q = document.getElementById('emp-search').value.toLowerCase();
-  const cargo = document.getElementById('emp-cargo').value;
-  const grupo = document.getElementById('emp-grupo').value;
-  const r = EMPLEADOS.filter(e => {
-    const name = `${e.nombre} ${e.apellido} ${e.cedula}`.toLowerCase();
-    return (!q || name.includes(q)) && (!cargo || e.cargo===cargo) && (!grupo || e.grupo===grupo);
-  });
-  renderEmpleados(r);
-}
-
-function showEmpDetail(id) {
-  const e = EMPLEADOS.find(x=>x.id===id);
-  if(!e) return;
-  const initials = (e.nombre[0]||'')+(e.apellido[0]||'');
-  document.getElementById('emp-detail-body').innerHTML = `
-    <div class="emp-header">
-      <div class="emp-avatar">${initials}</div>
-      <div>
-        <div class="emp-name">${e.nombre} ${e.apellido}</div>
-        <div class="emp-role">${badgeCargo(e.cargo)}</div>
-        <div class="emp-meta">
-          <span class="emp-meta-item">🪪 ${e.cedula}</span>
-          <span class="emp-meta-item">📚 ${e.grupo}</span>
-          <span class="emp-meta-item">🏦 ${e.banco||'N/A'}</span>
-        </div>
-      </div>
-    </div>
-    <div class="grid-2">
-      <div>
-        <div class="payslip-section-title">Información salarial</div>
-        <div class="pay-row"><span class="pay-label">Sueldo Básico</span><span class="pay-val positive">${COP(e.sueldo)}</span></div>
-        <div class="pay-row"><span class="pay-label">Aux. Transporte</span><span class="pay-val">${e.auxTrans?COP(e.auxTrans):'No aplica'}</span></div>
-        <div class="pay-row"><span class="pay-label">Total mensual</span><span class="pay-val positive">${COP(e.sueldo+e.auxTrans)}</span></div>
-        <div class="pay-row"><span class="pay-label">Dcto. Salud (4%)</span><span class="pay-val negative">- ${COP(e.sueldo*0.04)}</span></div>
-        <div class="pay-row"><span class="pay-label">Dcto. Pensión (4%)</span><span class="pay-val negative">- ${COP(e.sueldo*0.04)}</span></div>
-        <div class="pay-row" style="border-top:1px solid var(--border2);margin-top:6px;padding-top:10px"><span class="pay-label" style="font-weight:600;color:var(--text)">Neto estimado</span><span class="pay-val positive">${COP(e.sueldo+e.auxTrans-e.sueldo*0.08)}</span></div>
-      </div>
-      <div>
-        <div class="payslip-section-title">Afiliaciones y contrato</div>
-        <div class="pay-row"><span class="pay-label">EPS</span><span class="pay-val">${e.eps||'—'}</span></div>
-        <div class="pay-row"><span class="pay-label">ARL</span><span class="pay-val">${e.arl||'—'}</span></div>
-        <div class="pay-row"><span class="pay-label">Banco</span><span class="pay-val">${e.banco||'—'}</span></div>
-        <div class="pay-row"><span class="pay-label">Inicio contrato</span><span class="pay-val">${e.inicio}</span></div>
-        <div class="pay-row"><span class="pay-label">Fin contrato</span><span class="pay-val">${e.fin}</span></div>
-        <div class="pay-row"><span class="pay-label">Estado</span><span class="pay-val positive">Activo</span></div>
-      </div>
-    </div>`;
-  openModal('emp-detail-modal');
-}
-
-function loadNomina() {
-  const tb = document.getElementById('nom-tbody');
-  const tipo = document.getElementById('nom-tipo').value;
-  const data = NOMINA_ABRIL.filter(n=>!tipo||(tipo==='admin'&&n.tipo==='admin')||(tipo==='docente'&&n.tipo==='docente'));
-  tb.innerHTML = data.map((n,i)=>`
-    <tr>
-      <td class="td-muted">${i+1}</td>
-      <td style="max-width:180px;white-space:normal;font-size:12.5px">${n.nombre}</td>
-      <td class="td-mono td-muted" style="font-size:11px">${n.cedula}</td>
-      <td class="td-muted">${n.diasLab}</td>
-      <td class="td-muted">${n.diasVac||'—'}</td>
-      <td class="td-muted">${n.diasInca||'—'}</td>
-      <td class="td-green">${COP(n.salario)}</td>
-      <td class="td-mono td-muted">${n.auxTrans?COP(n.auxTrans):'—'}</td>
-      <td class="td-mono td-muted">${n.vacaciones?COP(n.vacaciones):'—'}</td>
-      <td class="td-mono td-muted">${n.incapacidad?COP(n.incapacidad):'—'}</td>
-      <td class="td-mono td-muted">${n.bono?COP(n.bono):'—'}</td>
-      <td class="td-green">${COP(n.saldNeto)}</td>
-      <td class="td-green" style="font-weight:600">${COP(n.totalPagar)}</td>
-      <td class="td-red">${COP(n.dSalud)}</td>
-      <td class="td-red">${COP(n.dPension)}</td>
-      <td class="td-mono td-muted">${n.prestamo?COP(n.prestamo):'—'}</td>
-      <td class="td-green" style="font-weight:600;font-size:14px">${n.neto?COP(n.neto):'Pendiente'}</td>
-      <td><button class="btn btn-ghost" style="padding:4px 8px;font-size:11px" onclick="verRecibo('${n.cedula}')">Recibo</button></td>
-    </tr>`).join('');
-
-  const totDiv = document.getElementById('nom-totals');
-  const totalPagar = data.reduce((s,n)=>s+n.totalPagar,0);
-  const totalNeto = data.reduce((s,n)=>s+n.neto,0);
-  const totalDed = data.reduce((s,n)=>s+n.dSalud+n.dPension,0);
-  const totalPrestamos = data.reduce((s,n)=>s+n.prestamo,0);
-  totDiv.innerHTML = `
-    <div><div class="metric-label" style="font-size:11px">Total devengado</div><div style="font-size:18px;font-weight:600;color:var(--green);font-family:'DM Mono',monospace">${COP(totalPagar)}</div></div>
-    <div><div class="metric-label" style="font-size:11px">Total neto a pagar</div><div style="font-size:18px;font-weight:600;color:var(--accent2);font-family:'DM Mono',monospace">${COP(totalNeto)}</div></div>
-    <div><div class="metric-label" style="font-size:11px">Total deducciones</div><div style="font-size:18px;font-weight:600;color:var(--red);font-family:'DM Mono',monospace">${COP(totalDed)}</div></div>
-    <div><div class="metric-label" style="font-size:11px">Total préstamos</div><div style="font-size:18px;font-weight:600;color:var(--amber);font-family:'DM Mono',monospace">${COP(totalPrestamos)}</div></div>
-  `;
-}
-
-function exportNomina(){ alert('Exportando nómina a Excel...'); }
-
-function calcNomina() {
-  const sel = document.getElementById('calc-emp').value;
-  if(!sel) return;
-  const emp = EMPLEADOS.find(e=>e.cedula===sel);
-  if(!emp) return;
-  const dias = parseInt(document.getElementById('calc-dias').value)||0;
-  const diasVac = parseInt(document.getElementById('calc-vac').value)||0;
-  const diasInca = parseInt(document.getElementById('calc-inca').value)||0;
-  const bono = parseFloat(document.getElementById('calc-bono').value)||0;
-  const dsct = parseFloat(document.getElementById('calc-dsct').value)||0;
-
-  const salDia = emp.sueldo/30;
-  const auxDia = emp.auxTrans/30;
-  const salNeto = salDia*dias;
-  const auxNeto = auxDia*dias;
-  const vacVal = (diasVac>0)?(emp.sueldo/30)*diasVac*1.0417:0;
-  const incaVal = (diasInca>0)?(emp.sueldo/30)*diasInca*0.6667:0;
-  const totalDev = salNeto+auxNeto+vacVal+incaVal+bono;
-  const dSalud = emp.sueldo*0.04;
-  const dPension = emp.sueldo*0.04;
-  const neto = totalDev - dSalud - dPension - dsct;
-
-  document.getElementById('calc-result').innerHTML = `
-    <div class="payslip" style="margin-top:0">
-      <div class="payslip-header" style="border-radius:10px 10px 0 0">
-        <div style="font-size:18px;font-weight:700">GIMAV — Comprobante Provisional</div>
-        <div style="font-size:13px;opacity:0.85;margin-top:4px">${emp.nombre} ${emp.apellido} · ${emp.cargo}</div>
-      </div>
-      <div class="payslip-body">
-        <div class="payslip-section">
-          <div class="payslip-section-title">Devengos</div>
-          <div class="pay-row"><span class="pay-label">Salario (${dias} días)</span><span class="pay-val positive">${COP(salNeto)}</span></div>
-          <div class="pay-row"><span class="pay-label">Aux. Transporte (${dias} días)</span><span class="pay-val">${COP(auxNeto)}</span></div>
-          ${diasVac>0?`<div class="pay-row"><span class="pay-label">Vacaciones (${diasVac} días)</span><span class="pay-val positive">${COP(vacVal)}</span></div>`:''}
-          ${diasInca>0?`<div class="pay-row"><span class="pay-label">Incapacidad (${diasInca} días)</span><span class="pay-val">${COP(incaVal)}</span></div>`:''}
-          ${bono>0?`<div class="pay-row"><span class="pay-label">Bonificación/Reemplazo</span><span class="pay-val positive">${COP(bono)}</span></div>`:''}
-        </div>
-        <div class="payslip-section">
-          <div class="payslip-section-title">Deducciones</div>
-          <div class="pay-row"><span class="pay-label">Salud (4%)</span><span class="pay-val negative">- ${COP(dSalud)}</span></div>
-          <div class="pay-row"><span class="pay-label">Pensión (4%)</span><span class="pay-val negative">- ${COP(dPension)}</span></div>
-          ${dsct>0?`<div class="pay-row"><span class="pay-label">Descuentos adicionales</span><span class="pay-val negative">- ${COP(dsct)}</span></div>`:''}
-        </div>
-        <div class="total-bar">
-          <span class="label">NETO A PAGAR</span>
-          <span class="val">${COP(neto)}</span>
-        </div>
-      </div>
-    </div>`;
-}
-
-function loadRecibos() {
-  const search = document.getElementById('recibo-search').value.toLowerCase();
-  const list = document.getElementById('recibo-list');
-  const data = NOMINA_ABRIL.filter(n => !search || n.nombre.toLowerCase().includes(search));
-  list.innerHTML = data.map(n=>`
-    <div onclick="showRecibo('${n.cedula}')" style="padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);transition:all 0.15s" 
-         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-      <div style="font-size:12.5px;font-weight:500;color:var(--text)">${n.nombre.split(' ').slice(0,3).join(' ')}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:2px">${n.neto?COP(n.neto):'Pendiente'}</div>
-    </div>`).join('');
-}
-
-function filterRecibos(){ loadRecibos(); }
-
-function verRecibo(cedula){ nav('recibos',document.querySelector('.nav-item:nth-child(5)')); setTimeout(()=>showRecibo(cedula),100); }
-
-function showRecibo(cedula) {
-  const n = NOMINA_ABRIL.find(x=>x.cedula===cedula);
-  if(!n) return;
-  document.getElementById('recibo-view').innerHTML = `
-    <div class="payslip">
-      <div class="payslip-header">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div style="font-size:10px;opacity:0.7;text-transform:uppercase;letter-spacing:1px">EQUIPO AS LTDA — NIT. 900.237.177-8</div>
-            <div style="font-size:20px;font-weight:700;margin-top:4px">Gimnasio Infantil Mi Alegría de Vivir</div>
-            <div style="font-size:13px;opacity:0.8;margin-top:4px">Comprobante de Nómina — Abril 2026</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:10px;opacity:0.7">PERIODO</div>
-            <div style="font-size:14px;font-weight:600">01 — 30 Abr 2026</div>
-            <button onclick="alert('Generando PDF...')" style="margin-top:8px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer">📄 PDF</button>
-          </div>
-        </div>
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.2)">
-          <div style="font-size:11px;opacity:0.7">EMPLEADO</div>
-          <div style="font-size:16px;font-weight:600">${n.nombre}</div>
-          <div style="font-size:12px;opacity:0.8;margin-top:2px">Cédula: ${n.cedula}</div>
-        </div>
-      </div>
-      <div class="payslip-body">
-        <div class="grid-2" style="margin-bottom:18px">
-          <div>
-            <div class="payslip-section-title">Detalles del periodo</div>
-            <div class="pay-row"><span class="pay-label">Días laborados</span><span class="pay-val">${n.diasLab}</span></div>
-            <div class="pay-row"><span class="pay-label">Días vacaciones</span><span class="pay-val">${n.diasVac||'—'}</span></div>
-            <div class="pay-row"><span class="pay-label">Días incapacidad</span><span class="pay-val">${n.diasInca||'—'}</span></div>
-          </div>
-          <div>
-            <div class="payslip-section-title">Información contractual</div>
-            <div class="pay-row"><span class="pay-label">Salario básico</span><span class="pay-val positive">${COP(n.salario)}</span></div>
-            <div class="pay-row"><span class="pay-label">Aux. transporte</span><span class="pay-val">${n.auxTrans?COP(n.auxTrans):'No aplica'}</span></div>
-          </div>
-        </div>
-        <div class="grid-2">
-          <div>
-            <div class="payslip-section-title">Devengos</div>
-            <div class="pay-row"><span class="pay-label">Salario neto</span><span class="pay-val positive">${COP(n.saldNeto)}</span></div>
-            <div class="pay-row"><span class="pay-label">Aux. transporte neto</span><span class="pay-val">${n.auxNeto?COP(n.auxNeto):'—'}</span></div>
-            ${n.incapacidad?`<div class="pay-row"><span class="pay-label">Incapacidad/Vacación</span><span class="pay-val">${COP(n.incapacidad)}</span></div>`:''}
-            ${n.bono?`<div class="pay-row"><span class="pay-label">Bonificación</span><span class="pay-val positive">${COP(n.bono)}</span></div>`:''}
-            <div class="pay-row" style="border-top:1px solid var(--border2);font-weight:600"><span class="pay-label" style="color:var(--text)">TOTAL DEVENGADO</span><span class="pay-val positive">${COP(n.totalPagar)}</span></div>
-          </div>
-          <div>
-            <div class="payslip-section-title">Deducciones</div>
-            <div class="pay-row"><span class="pay-label">Dcto. Salud (4%)</span><span class="pay-val negative">- ${COP(n.dSalud)}</span></div>
-            <div class="pay-row"><span class="pay-label">Dcto. Pensión (4%)</span><span class="pay-val negative">- ${COP(n.dPension)}</span></div>
-            ${n.prestamo?`<div class="pay-row"><span class="pay-label">Préstamo Equipo AS</span><span class="pay-val negative">- ${COP(n.prestamo)}</span></div>`:''}
-            <div class="pay-row" style="border-top:1px solid var(--border2);font-weight:600"><span class="pay-label" style="color:var(--text)">TOTAL DEDUCIDO</span><span class="pay-val negative">- ${COP(n.dSalud+n.dPension+n.prestamo)}</span></div>
-          </div>
-        </div>
-        <div class="total-bar" style="margin-top:18px">
-          <div>
-            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Neto a pagar</div>
-            <div style="font-size:22px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace">${n.neto?COP(n.neto):'Pendiente'}</div>
-          </div>
-          <div style="text-align:right;font-size:12px;color:var(--text3)">
-            <div>ARL: POSITIVO NIVEL 2</div>
-            <div style="margin-top:4px">COMFAMILIAR</div>
-          </div>
-        </div>
-        <div style="margin-top:18px;display:flex;justify-content:space-between;font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:14px">
-          <div>Firma Empleador: ___________________________</div>
-          <div>Firma Empleado: ___________________________</div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function initCharts() {
-  const c1 = document.getElementById('chartNomina');
-  if(c1) new Chart(c1,{type:'bar',data:{labels:['Ene','Feb','Mar','Abr','May'],datasets:[{label:'Nómina',data:[17050214,84156000,86490000,88120000,91340000],backgroundColor:'rgba(108,99,255,0.6)',borderColor:'rgba(108,99,255,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#5C6380',callback:v=>('$'+(v/1000000).toFixed(1)+'M')},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
-  const c2 = document.getElementById('chartCargos');
-  if(c2) new Chart(c2,{type:'doughnut',data:{labels:['Docentes','Auxiliares','Administrativos','Otros'],datasets:[{data:[22,7,5,4],backgroundColor:['rgba(108,99,255,0.7)','rgba(0,212,170,0.7)','rgba(245,166,35,0.7)','rgba(255,91,114,0.7)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'68%'}});
-  const c3 = document.getElementById('chartDed');
-  if(c3) new Chart(c3,{type:'bar',data:{labels:['Salud','Pensión','Préstamos','Libros','Ahorro'],datasets:[{label:'Deducciones',data:[966686,966686,124000,0,0],backgroundColor:['rgba(255,91,114,0.7)','rgba(255,91,114,0.5)','rgba(245,166,35,0.7)','rgba(0,212,170,0.5)','rgba(108,99,255,0.5)'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#5C6380',callback:v=>'$'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
-}
-
-function initReportCharts() {
-  const r1 = document.getElementById('rpt-year');
-  if(r1) new Chart(r1,{type:'line',data:{labels:['Ene','Feb','Mar','Abr','May'],datasets:[{label:'Total nómina',data:[17050214,84156000,86490000,88120000,91340000],fill:true,borderColor:'rgba(108,99,255,0.9)',backgroundColor:'rgba(108,99,255,0.08)',tension:0.4,pointBackgroundColor:'rgba(108,99,255,1)',pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
-  const r2 = document.getElementById('rpt-grupos');
-  if(r2) new Chart(r2,{type:'bar',data:{labels:['Caminadores','Párvulos','Prejardín','Jardín','Transición','Administrativo'],datasets:[{label:'Costo mensual',data:[3000000,4875358,7502716,7876811,12574306,24120540],backgroundColor:'rgba(0,212,170,0.6)',borderColor:'rgba(0,212,170,1)',borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5C6380',callback:v=>'$'+(v/1000000).toFixed(1)+'M'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#5C6380'},grid:{display:false}}}}});
-}
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
 const supabaseUrl = 'https://ffxbkmwrjlfiabrvotld.supabase.co';
 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZmeGJrbXdyamxmaWFicnZvdGxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDc5MzMsImV4cCI6MjA5NTQ4MzkzM30.BQB4t9mdequ2akhHcTH3laLA4LDV4do8k_HsE3ZU1io';
 
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
 
 console.log('Supabase conectado correctamente');
-</script>
 
-</body>
-</html>
+// ===============================
+// LOGIN
+// ===============================
+
+async function doLogin() {
+
+const email = document.getElementById('login-user').value;
+const password = document.getElementById('login-pass').value;
+
+if(!email || !password){
+alert('Ingresa correo y contraseña');
+return;
+}
+
+const { data, error } = await supabaseClient.auth.signInWithPassword({
+email: email,
+password: password
+});
+
+if(error){
+alert('Error: ' + error.message);
+return;
+}
+
+console.log('Usuario conectado:', data);
+
+document.getElementById('login-screen').style.display='none';
+document.getElementById('app').style.display='block';
+}
+
+// ===============================
+// LOGOUT
+// ===============================
+
+async function doLogout(){
+
+await supabaseClient.auth.signOut();
+
+document.getElementById('login-screen').style.display='flex';
+document.getElementById('app').style.display='none';
+}
+
+// ===============================
+// VALIDAR SESIÓN
+// ===============================
+
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
+
+if(session){
+document.getElementById('login-screen').style.display = 'none';
+document.getElementById('app').style.display = 'block';
+}
+
+});
